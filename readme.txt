@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== WP Full Calendar ===
 Contributors: mikelynn,netweblogic
 Donate link: 
 Tags: calendar
