@@ -6,9 +6,10 @@ Requires at least: 2.0.2
 Tested up to: 2.1
 Stable tag: 4.3
 License: GPLv2 or later
+Version: -1
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+This is merely a stub readme while Marcus gets his code ready.  No need to download this just yet.
 
 == Description ==
 
