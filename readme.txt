@@ -1,46 +1,49 @@
-=== WP Full Calendar ===
-Contributors: mikelynn,netweblogic
-Donate link: 
-Tags: calendar
-Requires at least: 2.0.2
-Tested up to: 2.1
-Stable tag: 4.3
-License: GPLv2 or later
-Version: -1
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+=== WP FullCalendar ===
+Contributors: netweblogic, mikelynn
+Tags: calendar, calendars, jQuery calendar, ajax calendar, event calendars, events calendar
+Requires at least: 3.3
+Tested up to: 3.4
+Stable tag: 0.5
 
-This is merely a stub readme while Marcus gets his code ready.  No need to download this just yet.
+Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and other custom post types
 
 == Description ==
 
-This is just a test post - will be overwritten by Marcus
+[FullCalendar](http://arshaw.com/fullcalendar/ "jQuery Calendar Plugin") is a free open source jQuery plugin by Adam Arshaw which generates a stunning calendar populated with your events, posts or any other custom post type.
+
+This plugin combines the power of FullCalendar and WordPress to present your posts in a calendar format, which can be filtered by custom taxonomies such as categories and tags.
+
+[Demo - See it in action](http://demo.wp-events-plugin.com/calendar/ "Events Manager Calendar Plugin")
+
+= Features =
+
+* AJAX powered
+* Month/Week/Day views
+* Style your calendar with dozens of themes or create your own with the jQuery ThemeRoller
+* Filter by taxonomy, such as category, tag etc.
+* Supports custom post types and custom taxonomies
+* Popout post summaries and thumbnails when you hover over your calendar items using jQuery qTips
+* Integrates seamlessly with [Events Manager](http://wordpress.org/extend/plugins/events-manager/)
+* Various hooks and filters for added flexibility for developers
+
+= Credits =
+
+* Big thank you to Michael Lynn who generously gave us this plugin namespace after deciding not to go through with his implementation. One less confusing name on the plugin repo!
+* This plugin was originally created for the Events Manager plugin Pro add-on, which has been moved over here so it can be used by the community for other post types.
+
+= Roadmap =
+
+Here's a rough roadmap of where we're heading, and will be ammended as time permits
+
+* Add formats for custom post types (currently only possible with Events Manager)
+* Colors for other custom post types (currently only possible with Events Manager)
+* Multiple post types on one calendar
+* More FullCalendar options integrated into the settings page
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
-
-== Frequently Asked Questions ==
-
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
-
-== Screenshots ==
-
+Install this plugin like a normal WordPress plugin. Once activated, you'll see a new panel in the Settings section for editing the options for calendar display.
 
 == Changelog ==
-
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
+= 0.1 =
+* first version, ported from Events Manager Fullcalendar 1.4
