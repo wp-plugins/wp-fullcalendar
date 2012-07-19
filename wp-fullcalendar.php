@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP FullCalendar
-Version: 0.5
+Version: 0.6
 Plugin URI: http://wordpress.org/extend/plugins/wp-fullcalendar/
 Description: Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and eventually other CPTs. Integrates well with Events Manager
 Author: Marcus Sykes
@@ -162,6 +162,8 @@ class WP_FullCalendar{
 	 */
 	function calendar( $args = array() ){
 		if (is_array($args) ) self::$args = array_merge(self::$args, $args);
+		self::$args['month'] = (!empty($args['month'])) ? $args['month']-1:date('m', current_time('timestamp'))-1;
+		self::$args['year'] = (!empty($args['year'])) ? $args['year']:date('Y', current_time('timestamp'));
 		self::$args = apply_filters('wpfc_fullcalendar_args', self::$args);
 		add_action('wp_footer', array('WP_FullCalendar','footer_js'));
 		ob_start();
@@ -183,7 +185,8 @@ class WP_FullCalendar{
 				foreach( get_object_taxonomies($post_type) as $taxonomy_name ){
 					$taxonomy = get_taxonomy($taxonomy_name);
 					if( count(get_terms($taxonomy_name, array('hide_empty'=>1))) > 0 && (empty($search_taxonomies) || in_array($taxonomy_name, $search_taxonomies)) ){
-						$taxonomy_args = array( 'echo'=>true, 'hide_empty' => 1, 'name' => $taxonomy_name, 'hierarchical' => true, 'class' => 'wpfc-taxonomy', 'taxonomy' => $taxonomy_name, 'selected'=>0, 'show_option_all' => $taxonomy->labels->all_items);
+						$default_value = !empty(self::$args[$taxonomy_name]) ? self::$args[$taxonomy_name]:0;
+						$taxonomy_args = array( 'echo'=>true, 'hide_empty' => 1, 'name' => $taxonomy_name, 'hierarchical' => true, 'class' => 'wpfc-taxonomy', 'taxonomy' => $taxonomy_name, 'selected'=> $default_value, 'show_option_all' => $taxonomy->labels->all_items);
 						wp_dropdown_categories( apply_filters('wpmfc_calendar_taxonomy_args', $taxonomy_args, $taxonomy ) );
 					}
 				}
@@ -210,7 +213,7 @@ class WP_FullCalendar{
 					$strings = array(); 
 					foreach( self::$args as $key => $arg ){
 						$arg = is_numeric($arg) ? (int) $arg : "'$arg'"; 
-						$strings[] = $key ." : ". $arg ; 
+						$strings[] = "'$key'" ." : ". $arg ; 
 					}
 					echo implode(", ", $strings);
 			?> };
@@ -221,6 +224,8 @@ class WP_FullCalendar{
 						center: 'title',
 						right: 'month,basicWeek,basicDay'
 					},
+					month: <?php echo self::$args['month']; ?>,
+					year: <?php echo self::$args['year']; ?>,
 					theme: WPFC.wpfc_theme,
 					firstDay: WPFC.firstDay,
 					editable: false,
@@ -302,3 +307,6 @@ function wpfc_settings_link($links) {
 	$new_links[] = '<a href="'.admin_url('options-general.php?page=wp-fullcalendar').'">'.__('Settings', 'wpfc').'</a>';
 	return array_merge($new_links,$links);
 }
+
+//translations
+load_plugin_textdomain('wpfc', false, dirname( plugin_basename( __FILE__ ) ).'/includes/langs');

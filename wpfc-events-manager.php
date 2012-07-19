@@ -14,6 +14,7 @@ function wpfc_em_init(){
 		add_action('wp_ajax_WP_FullCalendar', 'wpfc_em_ajax');
 		add_action('wp_ajax_nopriv_WP_FullCalendar', 'wpfc_em_ajax');
     }
+	add_filter('wpfc_fullcalendar_args', 'wpfc_em_fullcalendar_args');
     //overrides some EM stuff with FullCalendar depending on some extra settings
 	if(  defined('EM_VERSION') ){
 		if ( get_option('dbem_emfc_override_shortcode') ){
@@ -25,7 +26,19 @@ function wpfc_em_init(){
 		}
 	}
 }
-//add_action('init','wpfc_em_init', 101);
+add_action('init','wpfc_em_init');
+
+function wpfc_em_fullcalendar_args($args){
+    if( !empty($args['type']) && $args['type'] == 'event'){
+	    if( !empty($args['category']) ){
+		    $args[EM_TAXONOMY_CATEGORY] = $args['category'];
+	    }
+	    if( !empty($args['tag']) ){
+		    $args[EM_TAXONOMY_TAG] = $args['tag'];
+	    }
+    }
+    return $args;
+}
 
 /**
  * Adds a note to the event post type in the admin area, so it's obvious EM is interfering.
@@ -156,6 +169,8 @@ add_action('wpfc_calendar_search','wpfc_em_calendar_search', 10, 1);
  */
 function wpfc_em_ajax() {
 	$limit = get_option('wpfc_limit',3);
+    $_REQUEST['month'] = false; //no need for these two
+    $_REQUEST['year'] = false;
 	$year = date ( "Y", $_REQUEST['start'] );
 	$temp = date("Y-m-d", $_REQUEST ['start']);
 	$tomorrow = mktime ( 0, 0, 0, date ( "m", strtotime ( $temp ) ) + 1, date ( "d", strtotime ( $temp ) ), date ( "Y", strtotime ( $temp ) ) );
@@ -164,7 +179,7 @@ function wpfc_em_ajax() {
 
 	$args = array ('scope'=>array(date("Y-m-d", $_REQUEST['start']), date("Y-m-d", $_REQUEST['end'])), 'owner'=>false, 'status'=>1, 'orderby'=>'event_start_date, event_start_time');
 	//do some corrections for EM query
-	$_REQUEST['category'] = !empty($_REQUEST[EM_TAXONOMY_CATEGORY]) ? $_REQUEST[EM_TAXONOMY_CATEGORY]:false;
+	if( empty($_REQUEST['category']) ) $_REQUEST['category'] = !empty($_REQUEST[EM_TAXONOMY_CATEGORY]) ? $_REQUEST[EM_TAXONOMY_CATEGORY]:false;
 	$_REQUEST['tag'] = !empty($_REQUEST[EM_TAXONOMY_TAG]) ? $_REQUEST[EM_TAXONOMY_TAG]:false;
 	$args = apply_filters('wpfc_fullcalendar_args', array_merge($_REQUEST, $args));
 	$EM_Events = EM_Events::get( $args );
