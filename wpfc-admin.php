@@ -110,8 +110,8 @@ class WPFC_Admin {
 							<table class='form-table'>
 								<?php
 								global $events_placeholder_tip, $save_button;
-								wpfc_options_input_text ( __( 'Events limit', 'wpfc' ), 'wpfc_events_limit', __('Enter the maximum number of events to show per day, which will then be preceded by a link to the calendar day page.','wpfc') );
-								wpfc_options_input_text ( __( 'View events link', 'wpfc' ), 'wpfc_events_limit_txt', __('When the limit of events is shown for one day, this text will be used for the link to the calendar day page.','wpfc') );
+								wpfc_options_input_text ( __( 'Events limit', 'wpfc' ), 'wpfc_limit', __('Enter the maximum number of events to show per day, which will then be preceded by a link to the calendar day page.','wpfc') );
+								wpfc_options_input_text ( __( 'View events link', 'wpfc' ), 'wpfc_limit_txt', __('When the limit of events is shown for one day, this text will be used for the link to the calendar day page.','wpfc') );
 								?>
 							</table>
 						    <h2><?php _e('jQuery UI Themeroller','wpfc'); ?></h2>
