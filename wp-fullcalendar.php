@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP FullCalendar
-Version: 0.6.1
+Version: 0.7
 Plugin URI: http://wordpress.org/extend/plugins/wp-fullcalendar/
 Description: Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and eventually other CPTs. Integrates well with Events Manager
 Author: Marcus Sykes
@@ -231,7 +231,9 @@ class WP_FullCalendar{
 					editable: false,
 					eventSources: [{
 							url : WPFC.ajaxurl,
-							data : wpfc_data
+							data : wpfc_data,
+							ignoreTimezone: true,
+							allDayDefault: false
 					}],
 				    eventRender: function(event, element) {
 						if( event.post_id > 0 && WPFC.wpfc_qtips ){

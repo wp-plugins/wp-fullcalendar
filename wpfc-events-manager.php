@@ -22,7 +22,7 @@ function wpfc_em_init(){
 			add_shortcode('events_calendar', array('WP_FullCalendar','calendar'));
 		}
 		if( get_option('dbem_emfc_override_calendar') ){
-			add_filter ('em_content_pre', 'wpfc_em_content');
+			add_filter ('em_content_pre', 'wpfc_em_content',10,2);
 		}
 	}
 }
@@ -62,13 +62,15 @@ add_action('admin_notices', 'wpfc_em_admin_notice');
  * @param unknown_type $page_content
  * @return Ambigous <mixed, string>
  */
-function wpfc_em_content($page_content){
+function wpfc_em_content($content = '', $page_content=''){
 	global $wpdb, $post;
 	if ( em_is_events_page() ){
-		$content = WP_FullCalendar::calendar();
+		$calendar_content = WP_FullCalendar::calendar();
 		//Now, we either replace CONTENTS or just replace the whole page
 		if( preg_match('/CONTENTS/', $page_content) ){
-			$content = str_replace('CONTENTS',$content,$page_content);
+			$content = str_replace('CONTENTS',$calendar_content,$page_content);
+		}else{
+			$content = $calendar_content;
 		}
 	}
 	return $content;
@@ -208,6 +210,7 @@ function wpfc_em_ajax() {
 	}
 
 	foreach ( $EM_Events as $EM_Event ) {
+		/* var $EM_Event EM_Event */
 		$color = "#a8d144";
 		if ( !empty ( $EM_Event->get_categories()->categories )) {
 			foreach($EM_Event->get_categories()->categories as $EM_Category){
@@ -234,7 +237,7 @@ function wpfc_em_ajax() {
 		}
 		$event_date = date('Y-m-d', $EM_Event->start);
 		if($add_event && $event_date_counts[$event_date] <= $limit ){
-			$title = wp_kses($EM_Event->output(get_option('dbem_emfc_full_calendar_event_format', '#_EVENTNAME'), 'raw'), array());
+			$title = $EM_Event->output(get_option('dbem_emfc_full_calendar_event_format', '#_EVENTNAME'), 'raw');
 			$events[] = array ("title" => $title, "color" => $color, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id );
 		}elseif( empty($event_dates_more[$event_date]) ){
 			$event_dates_more[$event_date] = 1;
