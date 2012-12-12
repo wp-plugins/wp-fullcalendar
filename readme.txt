@@ -3,7 +3,7 @@ Contributors: netweblogic, mikelynn
 Tags: calendar, calendars, jQuery calendar, ajax calendar, event calendars, events calendar
 Requires at least: 3.3
 Tested up to: 3.4.1
-Stable tag: 0.7
+Stable tag: 0.8
 
 Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and other custom post types
 
@@ -45,6 +45,21 @@ Here's a rough roadmap of where we're heading, and will be ammended as time perm
 Install this plugin like a normal WordPress plugin. Once activated, you'll see a new panel in the Settings section for editing the options for calendar display.
 
 == Changelog ==
+= 0.8 =
+* added localization for calendar text (hardcoded, see WP_FullCalendar::localize_script())
+* added POT file and ability to translate, files located in included/langs
+* updated FC core code to 1.5.4, WP 3.5 Compatible
+* improved handling of white categories, now has a darker text/border for clarity
+* fixed events manager breaking tip content if no format is entered into EM settings
+* fixed qtips not being disabled if set to in settings page
+* fixed more... showing a time of 11:59pm
+* fixed more... not showing for other CPTs
+* added option to format times
+* added option to choose available views
+* added option to choose default view
+* fixed categories not correctly filtering if shortcode is passed a category attribute
+* fixed times being stripped when switching categories
+
 = 0.7 =
 * fixed issues with EM outputting converted html entities
 * fixed problem with ignoring CONTENTS on EM page when overriding calendars
