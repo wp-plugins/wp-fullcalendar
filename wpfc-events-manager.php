@@ -1,7 +1,7 @@
 <?php
 /*
 * EM Integration Stuff
-* We'll start moving stuff away here for now to decouple it completely fromt the plugin
+* We'll start moving stuff away here for now to decouple it completely from the plugin
 */
 /**
  * Initiallizes EM stuff by overriding some shortcodes, filters and actions 
@@ -181,7 +181,7 @@ function wpfc_em_ajax() {
 
 	$args = array ('scope'=>array(date("Y-m-d", $_REQUEST['start']), date("Y-m-d", $_REQUEST['end'])), 'owner'=>false, 'status'=>1, 'orderby'=>'event_start_date, event_start_time');
 	//do some corrections for EM query
-	if( empty($_REQUEST['category']) ) $_REQUEST['category'] = !empty($_REQUEST[EM_TAXONOMY_CATEGORY]) ? $_REQUEST[EM_TAXONOMY_CATEGORY]:false;
+	if( isset($_REQUEST[EM_TAXONOMY_CATEGORY]) || empty($_REQUEST['category']) ) $_REQUEST['category'] = !empty($_REQUEST[EM_TAXONOMY_CATEGORY]) ? $_REQUEST[EM_TAXONOMY_CATEGORY]:false;
 	$_REQUEST['tag'] = !empty($_REQUEST[EM_TAXONOMY_TAG]) ? $_REQUEST[EM_TAXONOMY_TAG]:false;
 	$args = apply_filters('wpfc_fullcalendar_args', array_merge($_REQUEST, $args));
 	$EM_Events = EM_Events::get( $args );
@@ -212,11 +212,17 @@ function wpfc_em_ajax() {
 	foreach ( $EM_Events as $EM_Event ) {
 		/* var $EM_Event EM_Event */
 		$color = "#a8d144";
+		$textColor = '#fff';
+		$borderColor = '#a8d144';
 		if ( !empty ( $EM_Event->get_categories()->categories )) {
 			foreach($EM_Event->get_categories()->categories as $EM_Category){
 				/* @var $EM_Category EM_Category */
-				if($EM_Category->get_color() != '#FFFFFF'){
-					$color = $EM_Category->get_color();
+				if( $EM_Category->get_color() != '' ){
+					$color = $borderColor = $EM_Category->get_color();
+					if( preg_match("/#fff(fff)?/i",$color) ){
+						$textColor = '#777';
+						$borderColor = '#ccc';
+					}
 					break;
 				}
 			}
@@ -238,23 +244,24 @@ function wpfc_em_ajax() {
 		$event_date = date('Y-m-d', $EM_Event->start);
 		if($add_event && $event_date_counts[$event_date] <= $limit ){
 			$title = $EM_Event->output(get_option('dbem_emfc_full_calendar_event_format', '#_EVENTNAME'), 'raw');
-			$events[] = array ("title" => $title, "color" => $color, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id );
+			$events[] = array ("title" => $title, "color" => $color, 'textColor'=>$textColor, 'borderColor'=>$borderColor, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id );
 		}elseif( empty($event_dates_more[$event_date]) ){
 			$event_dates_more[$event_date] = 1;
 			$day_ending = $event_date."T23:59:59";
-			$events[] = apply_filters('wpfc_events_more', array ("title" => get_option('wpfc_limit_txt','more ...'), "color" => get_option('wpfc_limit_color','#fbbe30'), "start" => $day_ending, "end" => $day_ending, "url" => str_replace('%s',$event_date,$event_page_link), 'post_id' => 0, 'event_id' => 0 ), $event_date);
+			$events[] = apply_filters('wpfc_events_more', array ("title" => get_option('wpfc_limit_txt','more ...'), "color" => get_option('wpfc_limit_color','#fbbe30'), "start" => $day_ending, "url" => str_replace('%s',$event_date,$event_page_link), 'post_id' => 0, 'event_id' => 0 ,'allDay' => true), $event_date);
 		}
 	}
 	echo EM_Object::json_encode( apply_filters('wpfc_events', $events) );
 	die();
 }
+
 /**
  * Overrides the original qtip_content function and provides Event Manager formatted event information
  * @param string $content
  * @return string
  */
 function wpfc_em_qtip_content( $content='' ){
-	if( defined('EM_VERSION') && !empty($_REQUEST['event_id'] ) ){
+	if( !empty($_REQUEST['event_id'] ) && trim(get_option('dbem_emfc_qtips_format')) != '' ){
 		global $EM_Event;
 		$EM_Event = em_get_event($_REQUEST['event_id']);
 		if( !empty($EM_Event->event_id) ){
