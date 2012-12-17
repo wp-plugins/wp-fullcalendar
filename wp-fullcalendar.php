@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP FullCalendar
-Version: 0.8
+Version: 0.8.1
 Plugin URI: http://wordpress.org/extend/plugins/wp-fullcalendar/
 Description: Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and eventually other CPTs. Integrates well with Events Manager
 Author: Marcus Sykes
@@ -123,9 +123,10 @@ class WP_FullCalendar{
 		);
 		//extra WP FUllCalendar translations here please:
 		$wp_fullcalendar_languages = array(
-			'es' => array('buttonText' => array('today'=>'hoy','month'=>'mes','week'=>'semana','day'=>'dia')),
-			'pt' => array('buttonText' => array('today'=>'hoje','month'=>'mes','week'=>'semana','day'=>'dia')),
-			'fr' => array('buttonText' => array('today'=>'aujourd\'hui','month'=>'mois','week'=>'semane','day'=>'jour'))
+			'es' => array('buttonText' => array('today'=>'Hoy','month'=>'Mes','week'=>'Semana','day'=>'Dia')),
+			'pt' => array('buttonText' => array('today'=>'Hoje','month'=>'Mes','week'=>'Semana','day'=>'Dia')),
+			'fr' => array('buttonText' => array('today'=>'Aujourd\'hui','month'=>'Mois','week'=>'Semane','day'=>'Jour')),
+			'de' => array('buttonText' => array('today'=>'Heute','month'=>'Monat','week'=>'Woche','day'=>'Tag'))
 		);
 		$calendar_languages = array_merge($calendar_languages, $wp_fullcalendar_languages);
 		if( array_key_exists($locale_code, $calendar_languages) ){
@@ -284,6 +285,7 @@ class WP_FullCalendar{
 				var fullcalendar_args = {
 					timeFormat: '<?php echo get_option('wpfc_timeFormat', 'h(:mm)t'); ?>',
 					defaultView: '<?php echo get_option('wpfc_defaultView', 'month'); ?>',
+					weekends: <?php echo get_option('wpfc_weekends',true) ? 'true':'false'; ?>,
 					header: {
 						left: 'prev,next today',
 						center: 'title',

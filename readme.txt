@@ -3,7 +3,7 @@ Contributors: netweblogic, mikelynn
 Tags: calendar, calendars, jQuery calendar, ajax calendar, event calendars, events calendar
 Requires at least: 3.3
 Tested up to: 3.4.1
-Stable tag: 0.8
+Stable tag: 0.8.1
 
 Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and other custom post types
 
@@ -45,6 +45,9 @@ Here's a rough roadmap of where we're heading, and will be ammended as time perm
 Install this plugin like a normal WordPress plugin. Once activated, you'll see a new panel in the Settings section for editing the options for calendar display.
 
 == Changelog ==
+= 0.8.1 =
+* fixed all-day EM events ending a day early
+
 = 0.8 =
 * added localization for calendar text (hardcoded, see WP_FullCalendar::localize_script())
 * added POT file and ability to translate, files located in included/langs

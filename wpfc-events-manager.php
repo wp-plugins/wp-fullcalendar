@@ -210,7 +210,7 @@ function wpfc_em_ajax() {
 	}
 
 	foreach ( $EM_Events as $EM_Event ) {
-		/* var $EM_Event EM_Event */
+		/* @var $EM_Event EM_Event */
 		$color = "#a8d144";
 		$textColor = '#fff';
 		$borderColor = '#a8d144';
@@ -244,7 +244,7 @@ function wpfc_em_ajax() {
 		$event_date = date('Y-m-d', $EM_Event->start);
 		if($add_event && $event_date_counts[$event_date] <= $limit ){
 			$title = $EM_Event->output(get_option('dbem_emfc_full_calendar_event_format', '#_EVENTNAME'), 'raw');
-			$events[] = array ("title" => $title, "color" => $color, 'textColor'=>$textColor, 'borderColor'=>$borderColor, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id );
+			$events[] = array ("title" => $title, "color" => $color, 'textColor'=>$textColor, 'borderColor'=>$borderColor, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id, 'allDay' => $EM_Event->event_all_day );
 		}elseif( empty($event_dates_more[$event_date]) ){
 			$event_dates_more[$event_date] = 1;
 			$day_ending = $event_date."T23:59:59";
