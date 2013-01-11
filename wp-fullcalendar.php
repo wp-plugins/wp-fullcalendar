@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP FullCalendar
-Version: 0.8.1
+Version: 0.8.2
 Plugin URI: http://wordpress.org/extend/plugins/wp-fullcalendar/
 Description: Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and eventually other CPTs. Integrates well with Events Manager
 Author: Marcus Sykes
@@ -33,10 +33,7 @@ class WP_FullCalendar{
 	function init() {
 		//Scripts
 		if( !is_admin() ){ //show only in public area
-			//Scripts
-			wp_enqueue_script('wp-fullcalendar', plugins_url('includes/js/main.js',__FILE__), array('jquery', 'jquery-ui-core','jquery-ui-widget','jquery-ui-position')); //jQuery will load as dependency
-			//Styles
-			wp_enqueue_style('wp-fullcalendar', plugins_url('includes/css/main.css',__FILE__));
+		    add_action('wp_enqueue_scripts',array('WP_FullCalendar','enqueue_scripts'));
 			//shortcodes
 			add_shortcode('fullcalendar', array('WP_FullCalendar','calendar'));
 			add_shortcode('events_fullcalendar', array('WP_FullCalendar','calendar')); //depreciated, will be gone by 1.0
@@ -50,14 +47,25 @@ class WP_FullCalendar{
 		add_action('wp_ajax_nopriv_wpfc_qtip_content', array('WP_FullCalendar','qtip_content') );
 		//base arguments
 		self::$args['type'] = get_option('wpfc_default_type','event');
-		//localize scripts
-		WP_FullCalendar::localize_script();
 		//START Events Manager Integration
 		if( defined('EM_VERSION') ){
 		    include('wpfc-events-manager.php');
 		    wpfc_em_init();
 		}
 		//END Events Manager Integration
+	}
+	
+	function enqueue_scripts(){
+	    global $wp_query;
+	    $obj_id = is_home() ? '-1':$wp_query->get_queried_object_id();
+	    $wpfc_scripts_limit = get_option('wpfc_scripts_limit');
+	    if( empty($wpfc_scripts_limit) || in_array($obj_id, explode(',',$wpfc_scripts_limit)) ){
+		    //Scripts
+		    wp_enqueue_script('wp-fullcalendar', plugins_url('includes/js/main.js',__FILE__), array('jquery', 'jquery-ui-core','jquery-ui-widget','jquery-ui-position')); //jQuery will load as dependency
+			WP_FullCalendar::localize_script();
+		    //Styles
+		    wp_enqueue_style('wp-fullcalendar', plugins_url('includes/css/main.css',__FILE__));
+	    }
 	}
 
 	function localize_script(){
@@ -119,21 +127,23 @@ class WP_FullCalendar{
 			'vi'=>array('closeText'=>'Đóng','prevText'=>'<Trước','nextText'=>'Tiếp>','currentText'=>'Hôm nay','monthNames'=>array('Tháng Một','Tháng Hai','Tháng Ba','Tháng Tư','Tháng Năm','Tháng Sáu','Tháng Bảy','Tháng Tám','Tháng Chín','Tháng Mười','Tháng Mười Một','Tháng Mười Hai'),'monthNamesShort'=>array('Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'),'dayNames'=>array('Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'),'dayNamesShort'=>array('CN','T2','T3','T4','T5','T6','T7'),'dayNamesMin'=>array('CN','T2','T3','T4','T5','T6','T7'),'weekHeader'=>'Tu','dateFormat'=>'dd/mm/yy','firstDay'=>0,'isRTL'=>false,'showMonthAfterYear'=>false,'yearSuffix'=>''),
 			'zh-TW'=>array('closeText'=>'關閉','prevText'=>'<上月','nextText'=>'下月>','currentText'=>'今天','monthNames'=>array('一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'),'monthNamesShort'=>array('一','二','三','四','五','六','七','八','九','十','十一','十二'),'dayNames'=>array('星期日','星期一','星期二','星期三','星期四','星期五','星期六'),'dayNamesShort'=>array('周日','周一','周二','周三','周四','周五','周六'),'dayNamesMin'=>array('日','一','二','三','四','五','六'),'weekHeader'=>'周','dateFormat'=>'yy/mm/dd','firstDay'=>1,'isRTL'=>false,'showMonthAfterYear'=>true,'yearSuffix'=>'年'),
 			'es'=>array('closeText'=>'Cerrar','prevText'=>'<Ant','nextText'=>'Sig>','currentText'=>'Hoy','monthNames'=>array('Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'),'monthNamesShort'=>array('Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'),'dayNames'=>array('Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'),'dayNamesShort'=>array('Dom','Lun','Mar','Mié','Juv','Vie','Sáb'),'dayNamesMin'=>array('Do','Lu','Ma','Mi','Ju','Vi','Sá'),'weekHeader'=>'Sm','dateFormat'=>'dd/mm/yy','firstDay'=>1,'isRTL'=>false,'showMonthAfterYear'=>false,'yearSuffix'=>''),
-			'it'=>array('closeText'=>'Fatto','prevText'=>'Precedente','nextText'=>'Prossimo','currentText'=>'Oggi','monthNames'=>array('Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'),'monthNamesShort'=>array('Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'),'dayNames'=>array('Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'),'dayNamesShort'=>array('Lun','Mar','Mer','Gio','Ven','Sab','Dom'),'dayNamesMin'=>array('Do','Lu','Ma','Me','Gi','Ve','Sa'),'weekHeader'=>'Wk','dateFormat'=>'dd/mm/yy','firstDay'=>1,'isRTL'=>false,'showMonthAfterYear'=>false,'yearSuffix'=>'')
+			'it'=>array('closeText'=>'Fatto','prevText'=>'Precedente','nextText'=>'Prossimo','currentText'=>'Oggi','monthNames'=>array('Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'),'monthNamesShort'=>array('Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'),'dayNames'=>array('Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'),'dayNamesShort'=>array('Dom','Lun','Mar','Mer','Gio','Ven','Sab'),'dayNamesMin'=>array('Do','Lu','Ma','Me','Gi','Ve','Sa'),'weekHeader'=>'Wk','dateFormat'=>'dd/mm/yy','firstDay'=>1,'isRTL'=>false,'showMonthAfterYear'=>false,'yearSuffix'=>'')
 		);
 		//extra WP FUllCalendar translations here please:
 		$wp_fullcalendar_languages = array(
 			'es' => array('buttonText' => array('today'=>'Hoy','month'=>'Mes','week'=>'Semana','day'=>'Dia')),
 			'pt' => array('buttonText' => array('today'=>'Hoje','month'=>'Mes','week'=>'Semana','day'=>'Dia')),
-			'fr' => array('buttonText' => array('today'=>'Aujourd\'hui','month'=>'Mois','week'=>'Semane','day'=>'Jour')),
-			'de' => array('buttonText' => array('today'=>'Heute','month'=>'Monat','week'=>'Woche','day'=>'Tag'))
+			'fr' => array('buttonText' => array('today'=>'Aujourd\'hui','month'=>'Mois','week'=>'Semaine','day'=>'Jour', 'titleFormat'=> array('month'=>'MMMM yyyy','week'=>'\'Du\' d[ MMMM][ yyyy] \'au\' {d MMMM[ yyyy]}','day'=>'dddd d MMMM yyyy'), 'columnFormat'=> array('month'=>'ddd','week'=>'ddd d/M','day'=>'dddd d MMMM yyyy'))),
+			'de' => array('buttonText' => array('today'=>'Heute','month'=>'Monat','week'=>'Woche','day'=>'Tag')),
+			'it' => array('buttonText' => array('today'=>'Oggi','month'=>'Mese','week'=>'Settimana','day'=>'Giorno'))
 		);
-		$calendar_languages = array_merge($calendar_languages, $wp_fullcalendar_languages);
+		$calendar_languages = array_merge_recursive($calendar_languages, $wp_fullcalendar_languages);
 		if( array_key_exists($locale_code, $calendar_languages) ){
-		    $jsvars['wpfc_locale'] = $calendar_languages[$locale_code];
+		    $js_vars['wpfc_locale'] = $calendar_languages[$locale_code];
 		}elseif( array_key_exists($locale_code_short, $calendar_languages) ){
 			$js_vars['wpfc_locale'] = $calendar_languages[$locale_code_short];
 		}
+		$js_vars['wpfc_locale']['firstDay'] =  $js_vars['firstDay']; //override firstDay with wp settings
 		wp_localize_script('wp-fullcalendar', 'WPFC', $js_vars);
 	}
 
@@ -143,6 +153,8 @@ class WP_FullCalendar{
 	function ajax(){
 	    global $post;
 	    //sort out args
+	    unset($_REQUEST['month']); //no need for these two
+	    unset($_REQUEST['year']);
 	    $args = array ('scope'=>array(date("Y-m-d", $_REQUEST['start']), date("Y-m-d", $_REQUEST['end'])), 'owner'=>false, 'status'=>1, 'order'=>'ASC', 'orderby'=>'post_date');
 	    //get post type and taxonomies, determine if we're filtering by taxonomy
 	    $post_type = !empty($_REQUEST['type']) ? $_REQUEST['type']:'post';
@@ -179,7 +191,8 @@ class WP_FullCalendar{
 	    	$post_timestamp = strtotime($post->post_date);
 	    	if( empty($item_date_counts[$post_date]) || $item_date_counts[$post_date] < $limit ){
 	    		$title = $post->post_title;
-	    		$items[] = array ("title" => $title, "color" => $color, "start" => date('Y-m-d\TH:i:s', $post_timestamp), "end" => date('Y-m-d\TH:i:s', $post_timestamp), "url" => get_permalink($post->ID), 'post_id' => $post->ID );
+	    		$item = array ("title" => $title, "color" => $color, "start" => date('Y-m-d\TH:i:s', $post_timestamp), "end" => date('Y-m-d\TH:i:s', $post_timestamp), "url" => get_permalink($post->ID), 'post_id' => $post->ID );
+	    		$items[] = apply_filters('wpfc_ajax_post', $item, $post);
 	    		$item_date_counts[$post_date] = (!empty($item_date_counts[$post_date]) ) ? $item_date_counts[$post_date]+1:1;
 	    	}elseif( empty($item_dates_more[$post_date]) ){
 	    		$item_dates_more[$post_date] = 1;

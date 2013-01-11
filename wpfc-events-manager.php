@@ -194,18 +194,19 @@ function wpfc_em_ajax() {
 	//get day link template
 	global $wp_rewrite;
 	if( get_option("dbem_events_page") > 0 ){
-		$event_page_link = trailingslashit(get_permalink(get_option("dbem_events_page"))); //PAGE URI OF EM
+		$event_page_link = get_permalink(get_option("dbem_events_page")); //PAGE URI OF EM
+		if( $wp_rewrite->using_permalinks() ){ $event_page_link = trailingslashit($event_page_link); } 
 	}else{
 		if( $wp_rewrite->using_permalinks() ){
 			$event_page_link = trailingslashit(home_url()).EM_POST_TYPE_EVENT_SLUG.'/'; //don't use EM_URI here, since ajax calls this before EM_URI is defined.
 		}else{
-			$event_page_link = trailingslashit(home_url()).'?post_type='.EM_POST_TYPE_EVENT; //don't use EM_URI here, since ajax calls this before EM_URI is defined.
+			$event_page_link = home_url().'?post_type='.EM_POST_TYPE_EVENT; //don't use EM_URI here, since ajax calls this before EM_URI is defined.
 		}
 	}
 	if( $wp_rewrite->using_permalinks() && !defined('EM_DISABLE_PERMALINKS') ){
 		$event_page_link .= "%s/";
 	}else{
-		$joiner = (stristr($event_page_link, "?")) ? "&amp;" : "?";
+		$joiner = (stristr($event_page_link, "?")) ? "&" : "?";
 		$event_page_link .= $joiner."calendar_day=%s";
 	}
 
@@ -244,7 +245,7 @@ function wpfc_em_ajax() {
 		$event_date = date('Y-m-d', $EM_Event->start);
 		if($add_event && $event_date_counts[$event_date] <= $limit ){
 			$title = $EM_Event->output(get_option('dbem_emfc_full_calendar_event_format', '#_EVENTNAME'), 'raw');
-			$events[] = array ("title" => $title, "color" => $color, 'textColor'=>$textColor, 'borderColor'=>$borderColor, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id, 'allDay' => $EM_Event->event_all_day );
+			$events[] = array ("title" => $title, "color" => $color, 'textColor'=>$textColor, 'borderColor'=>$borderColor, "start" => date('Y-m-d\TH:i:s', $EM_Event->start), "end" => date('Y-m-d\TH:i:s', $EM_Event->end), "url" => $EM_Event->get_permalink(), 'post_id' => $EM_Event->post_id, 'event_id' => $EM_Event->event_id, 'allDay' => $EM_Event->event_all_day == true );
 		}elseif( empty($event_dates_more[$event_date]) ){
 			$event_dates_more[$event_date] = 1;
 			$day_ending = $event_date."T23:59:59";

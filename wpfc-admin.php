@@ -10,6 +10,7 @@ class WPFC_Admin {
 		if( !empty($_REQUEST['_wpnonce']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'wpfc_options_save')){
 			foreach($_REQUEST as $option_name => $option_value){
 				if(substr($option_name, 0, 5) == 'wpfc_'){
+				    if( $option_name == 'wpfc_scripts_limit' ){ $option_value = str_replace(' ', '', $option_value); } //clean up comma seperated emails, no spaces needed
 					update_option($option_name, $option_value);
 				}
 			}
@@ -195,6 +196,16 @@ class WPFC_Admin {
 									</td>
 								</tr>
 							</table>
+							
+							
+							<h2><?php _e ( 'JS and CSS Files (Optimization)', 'wpfc' ); ?></h2>
+				            <table class="form-table">
+								<?php
+								wpfc_options_input_text( __( 'Load JS and CSS files on', 'dbem' ), 'wpfc_scripts_limit', __('Write the page IDs where you will display the FullCalendar on so CSS and JS files are only included on these pages. For multiple pages, use comma-seperated values e.g. 1,2,3. Leaving this blank will load our CSS and JS files on EVERY page, enter -1 for the home page.','wpfc') );
+								?>
+							</table>
+							
+							
 							<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('wpfc_options_save'); ?>" />
 							<p class="submit"><input type="submit" value="<?php _e('Submit Changes','wpfc'); ?>" class="button-primary"></p>
 						</form>
