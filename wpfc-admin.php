@@ -10,6 +10,7 @@ class WPFC_Admin {
 		if( !empty($_REQUEST['_wpnonce']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'wpfc_options_save')){
 			foreach($_REQUEST as $option_name => $option_value){
 				if(substr($option_name, 0, 5) == 'wpfc_'){
+				    if( $option_name == 'wpfc_scripts_limit' ){ $option_value = str_replace(' ', '', $option_value); } //clean up comma seperated emails, no spaces needed
 					update_option($option_name, $option_value);
 				}
 			}
@@ -108,8 +109,22 @@ class WPFC_Admin {
 				            </script>
 						    <h2><?php _e('Calendar Options','wpfc'); ?></h2>
 							<table class='form-table'>
+								<?php 
+								$available_views = apply_filters('wpfc_available_views',array('month'=>'Month','basicWeek'=>'Week (basic)','basicDay'=>'Day (basic)','agendaWeek'=>'Week (agenda)','agendaDay'=>'Day (agenda)'));
+								?>
+								<tr>
+									<th scope="row"><?php _e('Available Views','wpfc'); ?></th>
+									<td>
+										<?php $wpfc_available_views = get_option('wpfc_available_views', array('month','basicWeek','basicDay')); ?>
+										<?php foreach( $available_views as $view_key => $view_value ): ?>
+										<input type="checkbox" name="wpfc_available_views[]" value="<?php echo $view_key ?>" <?php if( in_array($view_key, $wpfc_available_views) ){ echo 'checked="checked"'; } ?>/> <?php echo $view_value; ?><br />
+										<?php endforeach; ?>
+										<em><?php _e('Users will be able to select from these views when viewing the calendar.'); ?></em>
+									</td>
+								</tr>
 								<?php
-								global $events_placeholder_tip, $save_button;
+								wpfc_options_select( __('Default View','wpfc'), 'wpfc_defaultView', $available_views, __('Choose the default view to be displayed when the calendar is first shown.','wpfc') );
+								wpfc_options_input_text ( __( 'Time Format', 'wpfc' ), 'wpfc_timeFormat', sprintf(__('Set the format used for showing the times on the calendar, <a href="%s">see possible combinations</a>. Leave blank for no time display.','wpfc'),'http://arshaw.com/fullcalendar/docs/utilities/formatDate/'), 'h(:mm)t' );
 								wpfc_options_input_text ( __( 'Events limit', 'wpfc' ), 'wpfc_limit', __('Enter the maximum number of events to show per day, which will then be preceded by a link to the calendar day page.','wpfc') );
 								wpfc_options_input_text ( __( 'View events link', 'wpfc' ), 'wpfc_limit_txt', __('When the limit of events is shown for one day, this text will be used for the link to the calendar day page.','wpfc') );
 								?>
@@ -181,6 +196,16 @@ class WPFC_Admin {
 									</td>
 								</tr>
 							</table>
+							
+							
+							<h2><?php _e ( 'JS and CSS Files (Optimization)', 'wpfc' ); ?></h2>
+				            <table class="form-table">
+								<?php
+								wpfc_options_input_text( __( 'Load JS and CSS files on', 'dbem' ), 'wpfc_scripts_limit', __('Write the page IDs where you will display the FullCalendar on so CSS and JS files are only included on these pages. For multiple pages, use comma-seperated values e.g. 1,2,3. Leaving this blank will load our CSS and JS files on EVERY page, enter -1 for the home page.','wpfc') );
+								?>
+							</table>
+							
+							
 							<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('wpfc_options_save'); ?>" />
 							<p class="submit"><input type="submit" value="<?php _e('Submit Changes','wpfc'); ?>" class="button-primary"></p>
 						</form>
