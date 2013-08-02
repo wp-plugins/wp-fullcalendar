@@ -82,10 +82,7 @@ function wpfc_em_content($content = '', $page_content=''){
  */
 function wpfc_em_calendar_search($args){
 	if( defined('EM_VERSION') && $args['type'] == 'event' ){
-		$country = '';
-		if( !empty($_REQUEST['country']) ){
-			$country = !empty($_REQUEST['country']) ? $_REQUEST['country']:'';
-		}
+		$country = !empty($args['country']) ? $args['country']:'';
 		?>
 		<?php if( empty($country) ): ?>
 		<!-- START Country Search -->
@@ -164,7 +161,8 @@ function wpfc_em_calendar_search($args){
 		<?php endif;
 	}
 }
-add_action('wpfc_calendar_search','wpfc_em_calendar_search', 10, 1);
+//this never worked because the action was never correctly called, until we add a setting for this in the options page, uncomment the line below or paste it in your functions.php file
+//add_action('wpfc_calendar_search','wpfc_em_calendar_search', 10, 1);
 
 /**
  * Replaces the normal WPFC ajax and uses the EM query system to provide event specific results. 
@@ -277,11 +275,11 @@ add_filter('wpfc_qtip_content', 'wpfc_em_qtip_content');
  * Changes the walker object so we can inject color values into the options
  * @param array $args
  * @param object $taxonomy
- * @return EM_Categories_Walker
+ * @return WPFC_EM_Categories_Walker
  */
 function wpmfc_em_taxonomy_args($args, $taxonomy){
 	if( $taxonomy->name == EM_TAXONOMY_CATEGORY ){
-		$args['walker'] = new EM_Categories_Walker;
+		$args['walker'] = new WPFC_EM_Categories_Walker;
 	}
 	return $args;
 }
@@ -292,7 +290,7 @@ add_filter('wpmfc_calendar_taxonomy_args', 'wpmfc_em_taxonomy_args',10,2);
  * @author marcus
  *
  */
-class EM_Categories_Walker extends Walker {
+class WPFC_EM_Categories_Walker extends Walker {
 	var $tree_type = EM_TAXONOMY_CATEGORY;
 	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id');
 
@@ -317,11 +315,13 @@ class EM_Categories_Walker extends Walker {
 			$output .= ' selected="selected"';
 		$output .= '>';
 		$output .= $pad.$color.' - '.$cat_name;
-		if ( $args['show_count'] )
+		if ( !empty($args['show_count']) )
 			$output .= '&nbsp;&nbsp;('. $category->count .')';
-		if ( $args['show_last_update'] ) {
+		if ( !empty($args['show_last_update']) ) {
 			$format = 'Y-m-d';
-			$output .= '&nbsp;&nbsp;' . gmdate($format, $category->last_update_timestamp);
+			if( !empty($category->last_update_timestamp) ){
+				$output .= '&nbsp;&nbsp;' . gmdate($format, $category->last_update_timestamp);
+			}
 		}
 		$output .= "</option>";
 	}
