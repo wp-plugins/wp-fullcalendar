@@ -3,7 +3,7 @@ Contributors: netweblogic, mikelynn
 Tags: calendar, calendars, jQuery calendar, ajax calendar, event calendars, events calendar
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 0.8.3
+Stable tag: 0.8.4
 
 Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and other custom post types
 
@@ -45,6 +45,13 @@ Here's a rough roadmap of where we're heading, and will be ammended as time perm
 Install this plugin like a normal WordPress plugin. Once activated, you'll see a new panel in the Settings section for editing the options for calendar display.
 
 == Changelog ==
+= 0.8.4 =
+* moved Events Manager integration code out of WPFC into the EM plugin and added warning to notify EM users to update to latest plugin version
+* added Finnish, updated French
+* fixed post types with exclude_from_search = false not showing up
+* fixed media attachment post types not showing in the calendar
+* changed first function to be executed on plugins_loaded instead of init
+
 = 0.8.3 =
 * added some translations to calendars,
 * added wpfc_js_vars filter

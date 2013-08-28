@@ -75,7 +75,7 @@ class WPFC_Admin {
 								<ul class="wpfc-post-types">
 									<?php 
 									$selected_taxonomies = get_option('wpfc_post_taxonomies');
-									foreach( get_post_types( apply_filters('wpfc_get_post_types_args', array('public'=>true, 'exclude_from_search'=>false))) as $post_type ){
+									foreach( get_post_types( apply_filters('wpfc_get_post_types_args', array('public'=>true ))) as $post_type ){
 		 								$checked = get_option('wpfc_default_type') == $post_type ? 'checked':'';
 		 								$post_data = get_post_type_object($post_type);
 										echo "<li><label><input type='radio' class='wpfc-post-type' name='wpfc_default_type' value='$post_type' $checked />&nbsp;&nbsp;{$post_data->labels->name} (<em>$post_type</em>)</label>";
