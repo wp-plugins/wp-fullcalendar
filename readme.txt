@@ -1,9 +1,9 @@
 === WP FullCalendar ===
 Contributors: netweblogic, mikelynn
 Tags: calendar, calendars, jQuery calendar, ajax calendar, event calendars, events calendar
-Requires at least: 3.3
-Tested up to: 3.6
-Stable tag: 0.8.4
+Requires at least: 3.6
+Tested up to: 4.2.1
+Stable tag: 0.9
 
 Uses the jQuery FullCalendar plugin to create a stunning calendar view of events, posts and other custom post types
 
@@ -35,16 +35,35 @@ This plugin combines the power of FullCalendar and WordPress to present your pos
 
 Here's a rough roadmap of where we're heading, and will be ammended as time permits
 
+* Transition to the FullCalendar 2 JS framework
+* Move away from using qTips (or make as an alternative) and use jQuery UI tooltips instead
+* Add more native FullCalendar options to the settings page
 * Add formats for custom post types (currently only possible with Events Manager)
-* Colors for other custom post types (currently only possible with Events Manager)
+* Colors for other taxonomies (currently only possible with Events Manager)
 * Multiple post types on one calendar
-* More FullCalendar options integrated into the settings page
 
 == Installation ==
 
 Install this plugin like a normal WordPress plugin. Once activated, you'll see a new panel in the Settings section for editing the options for calendar display.
 
 == Changelog ==
+= 0.9 =
+* fixed E_STRICT warning for calling non-static functions
+* moved hard-coded translations out of wp-fullcalendar.php into wpfc-languages.php to prevent encoding issues when editing/committing
+* fixed HTTP(S) schema issues when only admin area forces SSL, AJAX only uses SSL if page is SSL
+* fixed wpfc_js_vars hook passing on filtered values to wp_localize_script()
+* moved PHP out of footer JS for calendar initiation
+* moved footer JS out of wp-fullcalendar.php and into external JS file which is then included
+* added 'settings saved' confirmation
+* fixed not being able to uncheck all taxonomies in settings page
+* fixed events spanning over a month not showing when going forward a month
+* updated jQuery UI CSS theme files to 1.11.4 including backwards compatibility for 1.10.x,
+* moved jQuery UI CSS loading out of JS and directly via wp_enqueue_style(),
+* changed theme CSS storage value to contain jQuery theme name or custom stylesheet name without paths (to allow backwards compatibility)
+* updated FullCalendar library to 1.6.6 (next update will use FC 2.x)
+* removed old selectmenu script/css and using native jQuery UI selectmenu instead
+* added Italian translation, thanks to Jeremy Wright!
+
 = 0.8.4 =
 * moved Events Manager integration code out of WPFC into the EM plugin and added warning to notify EM users to update to latest plugin version
 * added Finnish, updated French

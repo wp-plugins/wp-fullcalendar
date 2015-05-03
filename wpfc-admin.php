@@ -1,12 +1,12 @@
 <?php
 class WPFC_Admin {
-	function menus(){
+	public static function menus(){
 		$page = add_options_page('WP FullCalendar', 'WP FullCalendar', 'manage_options', 'wp-fullcalendar', array('WPFC_Admin','admin_options'));
 		wp_enqueue_style('wp-fullcalendar', plugins_url('includes/css/admin.css',__FILE__));
 	}
 
 
-	function admin_options(){
+	public static function admin_options(){
 		if( !empty($_REQUEST['_wpnonce']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'wpfc_options_save')){
 			foreach($_REQUEST as $option_name => $option_value){
 				if(substr($option_name, 0, 5) == 'wpfc_'){
@@ -14,6 +14,8 @@ class WPFC_Admin {
 					update_option($option_name, $option_value);
 				}
 			}
+			if( empty($_REQUEST['wpfc_post_taxonomies']) ){ update_option('wpfc_post_taxonomies', ''); }
+			echo '<div class="updated notice"><p>'.__('Settings saved.').'</p></div>';
 		}
 		?>
 		<div class="wrap">
@@ -133,17 +135,14 @@ class WPFC_Admin {
 						    <p><?php echo sprintf(__( 'You can select from a set of pre-made CSS themes, which are taken from the <a href="%s">jQuery Theme Roller</a> gallery. If you roll your own theme, upload the CSS file and images folder to <code>wp-content/yourtheme/plugins/wp-fullcalendar/</code> and refresh this page, it should appear an option in the pull down menu below.','wpfc' ),'http://jqueryui.com/themeroller/'); ?></p>
 							<table class='form-table'>
 								<?php
-								//get available CSS files
-								$plugin_path = plugin_dir_path(__FILE__)."/includes/css/ui-themes/";
-								foreach( glob($plugin_path."*.css") as $css_file ){
-									$css_file = str_replace($plugin_path,'',$css_file);
-									$css_files[$css_file] = plugins_url('/includes/css/ui-themes/'.$css_file,__FILE__);
-								}
-								//get theme CSS files
+								//jQuery UI ships with pre-made themes, so here they are. This was coded for packaged CSS Themes 1.10.4 and 1.11.4
+								$jquery_themes = array('black-tie','blitzer','cupertino','dark-hive','dot-luv','eggplant','excite-bike','flick','hot-sneaks','humanity','le-frog','mint-choc','overcast','pepper-grinder','redmond','smoothness','south-street','start','sunny','swanky-purse','trontastic','ui-darkness','ui-lightness','vader');
+								$jquery_themes = apply_filters('wpfc_jquery_themes', $jquery_themes);
+								//get custom theme CSS files
 								$plugin_path = get_stylesheet_directory()."/plugins/wp-fullcalendar/";
 								foreach( glob( $plugin_path.'*.css') as $css_file ){
 									$css_file = str_replace($plugin_path,'',$css_file);
-									$css_custom_files[$css_file] = get_stylesheet_directory_uri()."/plugins/wp-fullcalendar/".$css_file;
+									$css_custom_files[] = $css_file;
 								}
 								?>
 							    <tr class="form-field">
@@ -152,14 +151,14 @@ class WPFC_Admin {
 							            <select name="wpfc_theme_css">
 							            	<option><?php _e( 'No Theme','wpfc' ); ?></option>
 							            	<optgroup label="<?php _e('Built-In','wpfc'); ?>">
-								            	<?php foreach( $css_files as $css_file => $css_uri ): ?>
-								            	<option value="<?php echo $css_uri; ?>" <?php if(get_option('wpfc_theme_css') == $css_uri) echo 'selected="selected"'; ?>><?php echo $css_file; ?></option>
+								            	<?php foreach( $jquery_themes as $jquery_theme ): ?>
+								            	<option <?php if(get_option('wpfc_theme_css') == $jquery_theme) echo 'selected="selected"'; ?>><?php echo esc_html($jquery_theme); ?></option>
 								            	<?php endforeach; ?>
 							            	</optgroup>
 							            	<?php if( !empty($css_custom_files) ): ?>
 							            	<optgroup label="<?php _e('Custom','wpfc'); ?>">
-							            		<?php foreach( $css_custom_files as $css_custom_file => $css_custom_file_uri ): ?>
-							            			<option value="<?php echo $css_custom_file_uri; ?>" <?php if(get_option('wpfc_theme_css') == $css_custom_file_uri) echo 'selected="selected"'; ?>><?php echo $css_custom_file; ?></option>
+							            		<?php foreach( $css_custom_files as $css_custom_file ): ?>
+							            			<option <?php if(get_option('wpfc_theme_css') == $css_custom_file) echo 'selected="selected"'; ?>><?php echo esc_html($css_custom_file); ?></option>
 							            		<?php endforeach; ?>
 							            	</optgroup>
 							            	<?php endif; ?>
@@ -168,7 +167,7 @@ class WPFC_Admin {
 							        </td>
 							    </tr>
 							</table>
-						    <h2><?php _e('Toolips','wpfc'); ?></h2>
+						    <h2><?php _e('Tooltips','wpfc'); ?></h2>
 						    <p><?php _e( 'You can use <a href="http://craigsworks.com/projects/qtip2/">jQuery qTips</a> to show excerpts of your events within a tooltip when hovering over a specific event on the calendar. You can control the content shown, positioning and style of the tool tips below.','wpfc' ); ?></p>
 							<table class='form-table'>
 							    <?php
